@@ -4,20 +4,23 @@
 #include <cstdint>
 #include <string>
 
+using NumberType = uint32_t;
+
 void CopyFile(std::string from_name, std::string to_name);
+enum OrderBy {Asc, Desc};
 
 class SortContainer final{
     private:
         // Указатель на часть файла, замапленного через mmap
-        uint32_t* file_contents;
+        NumberType* file_contents;
         // Количество чисел в fileContents
         uint64_t count;
-        Swap(&uint32_t l, &uint32_t r)
+        void Swap(NumberType& l, NumberType& r);
     public:
        SortContainer(std::string filename, size_t size_to_map, off_t offset);
        ~SortContainer();
 
-       MergeSort();
-}
+       void Sort(OrderBy order);
+};
 
 #endif
