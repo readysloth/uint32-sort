@@ -1,6 +1,5 @@
 #ifndef SORT_CONTAINER_HPP
 #define SORT_CONTAINER_HPP
-#include <map>
 #include <cstdint>
 #include <string>
 
@@ -15,7 +14,7 @@ class SortContainer final{
         NumberType* file_contents;
         // Количество чисел в fileContents
         uint64_t count;
-        void Swap(NumberType& l, NumberType& r);
+        //void Swap(NumberType& l, NumberType& r);
     public:
        SortContainer(std::string filename, size_t size_to_map, off_t offset);
        ~SortContainer();

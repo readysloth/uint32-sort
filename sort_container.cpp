@@ -63,14 +63,32 @@ void SortContainer::Sort(OrderBy order){
 
     struct Func{
         static int Asc(const void* left, const void* right){
-            const NumberType* l = static_cast<const NumberType*>(left);
-            const NumberType* r = static_cast<const NumberType*>(right);
-            return (*l - *r); 
+            const NumberType l = *(static_cast<const NumberType*>(left));
+            const NumberType r = *(static_cast<const NumberType*>(right));
+
+            if( l < r ){
+                return -1;
+            }
+            else if( l > r ){
+                return 1;
+            }
+            else{
+                return 0;
+            }
         }
         static int Desc(const void* left, const void* right){
-            const NumberType* l = static_cast<const NumberType*>(left);
-            const NumberType* r = static_cast<const NumberType*>(right);
-            return (*r - *l); 
+            const NumberType l = *(static_cast<const NumberType*>(left));
+            const NumberType r = *(static_cast<const NumberType*>(right));
+            
+            if( r < l ){
+                return -1;
+            }
+            else if( r > l ){
+                return 1;
+            }
+            else{
+                return 0;
+            }
         }
     };
     /*
@@ -81,7 +99,7 @@ void SortContainer::Sort(OrderBy order){
                             return (*r - *l);
                        };
     */
-
+    
     switch(order){
         case OrderBy::Asc:
             std::qsort(this->file_contents, 
@@ -97,11 +115,6 @@ void SortContainer::Sort(OrderBy order){
             break;
     }
 }
-
-
-
-
-
 
 
 
