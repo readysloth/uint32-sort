@@ -1,6 +1,4 @@
-#include <fstream>
 #include <stdexcept>
-#include <system_error>
 #include <ios>
 #include <cstdlib>
 
@@ -12,12 +10,6 @@
 
 #include "sort_container.hpp"
 
-void CopyFile(std::string from_name, std::string to_name){
-    std::ifstream  src(from_name, std::ios::binary);
-    std::ofstream  dst(to_name,   std::ios::binary);
-
-    dst << src.rdbuf();
-}
 
 /*
 SortContainer::Swap(&NumberType l, &NumberType r){
@@ -46,10 +38,11 @@ SortContainer::SortContainer(std::string filename, size_t size_to_map, off_t off
                                fd,
                                offset));
 
+
     if(this->file_contents == MAP_FAILED){
         throw std::runtime_error("Failed to map file"); 
     }
-
+    
     this->count = size_to_map/sizeof(NumberType);
     close(fd);
 }

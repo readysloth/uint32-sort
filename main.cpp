@@ -1,10 +1,11 @@
 #include <iostream>
-#include "sort_container.hpp"
+#include "file_manager.hpp"
 
 int main(){
-    CopyFile("0.garbage","copied.garbage");
+    // CopyFile("0.garbage","copied.garbage");
     
-    SortContainer("copied.garbage", 1024, 0).Sort(OrderBy::Asc);
+    FileManager file("0.garbage","copied.garbage");
     
+    file.SortFile(OrderBy::Asc);
 
 }

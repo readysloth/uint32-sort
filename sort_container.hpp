@@ -5,7 +5,6 @@
 
 using NumberType = uint32_t;
 
-void CopyFile(std::string from_name, std::string to_name);
 enum OrderBy {Asc, Desc};
 
 class SortContainer final{
@@ -13,7 +12,7 @@ class SortContainer final{
         // Указатель на часть файла, замапленного через mmap
         NumberType* file_contents;
         // Количество чисел в fileContents
-        uint64_t count;
+        size_t count;
         //void Swap(NumberType& l, NumberType& r);
     public:
        SortContainer(std::string filename, size_t size_to_map, off_t offset);
