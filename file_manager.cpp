@@ -65,12 +65,14 @@ void FileManager::SortFile(OrderBy order){
     this->sort_occured = true; 
     
     // Параллельно сортируем все числа внутри чанков
-    //#pragma omp parallel for
+
+    #pragma omp parallel for
     for(decltype(this->filesize) i = 0; i < this->file_parts.size(); i++){
         this->file_parts[i]->Sort(order);
     }
 
     this->file_parts.clear();
+    
     
     // Сортируем все чанки файла
     SortContainer(this->filename,

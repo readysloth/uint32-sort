@@ -2,6 +2,8 @@
 #include <ios>
 #include <cstdlib>
 
+//#include <iostream>
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -24,7 +26,7 @@ SortContainer::SortContainer(std::string filename, size_t size_to_map, off_t off
         throw std::length_error("Bad size_to_map: contains malformed NumberType");
     }
 
-    int fd = open(filename.c_str(), O_RDONLY);
+    int fd = open(filename.c_str(), O_RDWR);
 
     if (fd == -1){
         throw std::ios_base::failure("Error while opening " + filename);
@@ -34,7 +36,7 @@ SortContainer::SortContainer(std::string filename, size_t size_to_map, off_t off
                           mmap(nullptr,
                                size_to_map,
                                PROT_READ | PROT_WRITE,
-                               MAP_PRIVATE,
+                               MAP_SHARED,
                                fd,
                                offset));
 
@@ -93,6 +95,13 @@ void SortContainer::Sort(OrderBy order){
                        };
     */
     
+    /*
+    std::cout << "vvvvvvvvv" << std::endl;
+    for(int i = 0; i < this->count; i++){
+        std::cout << this->file_contents[i] << std::endl;
+    }
+    */
+
     switch(order){
         case OrderBy::Asc:
             std::qsort(this->file_contents, 
@@ -107,6 +116,9 @@ void SortContainer::Sort(OrderBy order){
                        Func::Desc);
             break;
     }
+    
+    //this->Debug();    
+
 }
 
 

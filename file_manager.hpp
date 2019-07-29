@@ -5,7 +5,8 @@
 
 class FileManager{
     private:
-        const size_t chunk_size = 4096*4;
+        // Размер одного чанка для обработке равен (размер_числа * 1МБ * 2)
+        const size_t chunk_size = sizeof(NumberType)*1024*1024*2;
         bool sort_occured = false;
         std::vector<SortContainer*>      file_parts;
         decltype(std::ifstream.tellg()) filesize;

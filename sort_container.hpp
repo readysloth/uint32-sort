@@ -2,6 +2,7 @@
 #define SORT_CONTAINER_HPP
 #include <cstdint>
 #include <string>
+#include <iostream>
 
 using NumberType = uint32_t;
 
@@ -19,6 +20,16 @@ class SortContainer final{
        ~SortContainer();
 
        void Sort(OrderBy order);
+
+       /*
+       void Debug(){
+           std::cout << "Im the " << this << std::endl;
+            for(size_t i = 0; i < count; i++){
+                std::cout << i << " : " << this->file_contents[i] << std::endl;
+            }
+
+       }
+       */
 };
 
 #endif
