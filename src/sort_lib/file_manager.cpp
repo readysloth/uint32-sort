@@ -6,6 +6,14 @@ void FileManager::CopyFile(std::string from_name, std::string to_name){
     std::ofstream  dst(to_name,   std::ios::binary);
 
     dst << src.rdbuf();
+    
+    if (if.bad()){
+        throw std::ios_base::failure("Error while reading " + from_name);
+    }
+
+    if (dst.bad()){
+        throw std::ios_base::failure("Error while writing " + to_name);
+    }
 
     this->filesize = src.tellg();
 }
@@ -31,7 +39,7 @@ void FileManager::DivideFile(size_t parts_cnt, size_t remainder_size){
     }
 
 
-    // В случае, если размер файла не кратен чанку, 
+    // В случае, если размер файла не кратен размеру чанка, 
     // то обрабатываем остаток отдельно
     if (remainder_size > 0){
         file_parts.push_back(new SortContainer(this->filename,
@@ -45,7 +53,7 @@ void FileManager::DivideFile(size_t parts_cnt, size_t remainder_size){
 }
 
 FileManager::FileManager(std::string from_name, std::string to_name){
-
+    
     this->filename = to_name;
 
     this->CopyFile(from_name, to_name);
@@ -53,23 +61,20 @@ FileManager::FileManager(std::string from_name, std::string to_name){
     size_t parts_cnt = this->filesize/chunk_size;
     size_t remainder_size = this->filesize % chunk_size;
 
+    // Резервируем в векторе вычисленное количество элементов
+    // для экономии операций релокации
     this->file_parts.reserve(parts_cnt);
 
     this->DivideFile(parts_cnt, remainder_size); 
 }
 
 FileManager::~FileManager(){
-    /*
-     if(!this->sort_occured)
-        delete this->file_parts;
-     */
 }
 
 void FileManager::SortFile(OrderBy order){
     this->sort_occured = true; 
     
     // Параллельно сортируем все числа внутри чанков
-
     #pragma omp parallel for
     for(decltype(this->filesize) i = 0; i < this->file_parts.size(); i++){
         this->file_parts[i]->Sort(order);
@@ -78,10 +83,11 @@ void FileManager::SortFile(OrderBy order){
         this->remaining_chunks--;
     }
 
+    // Вызовет деструктор у каждого объекта, удаляя мапинг чанков файла на память
     this->file_parts.clear();
     
     
-    // Сортируем все чанки файла
+    // Сортируем файл от начала до конца
     SortContainer(this->filename,
                   this->filesize,
                   0).Sort(order);    

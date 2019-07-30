@@ -14,22 +14,12 @@ class SortContainer final{
         NumberType* file_contents;
         // Количество чисел в fileContents
         size_t count;
-        //void Swap(NumberType& l, NumberType& r);
     public:
-       SortContainer(std::string filename, size_t size_to_map, off_t offset);
+       SortContainer(std::string filename, size_t size_to_map, size_t offset);
        ~SortContainer();
 
        void Sort(OrderBy order);
 
-       /*
-       void Debug(){
-           std::cout << "Im the " << this << std::endl;
-            for(size_t i = 0; i < count; i++){
-                std::cout << i << " : " << this->file_contents[i] << std::endl;
-            }
-
-       }
-       */
 };
 
 #endif

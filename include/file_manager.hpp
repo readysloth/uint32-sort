@@ -5,7 +5,7 @@
 
 class FileManager{
     private:
-        // Размер одного чанка для обработке равен (размер_числа * 1МБ * 2)
+        // Размер чанка для сортировки равен (размер_числа * 1МБ * 2)
         const size_t chunk_size = sizeof(NumberType)*1024*1024*2;
 
         // Инициализируется единицей так как в SortFile происходит
@@ -13,6 +13,8 @@ class FileManager{
         decltype(std::ifstream.tellg()) remaining_chunks = 1;
 
         bool sort_occured = false;
+        
+        // Хранилище контейнеров с чанками
         std::vector<SortContainer*>     file_parts;
         decltype(std::ifstream.tellg()) filesize;
         std::string                     filename;

@@ -2,8 +2,6 @@
 #include <ios>
 #include <cstdlib>
 
-//#include <iostream>
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -13,15 +11,9 @@
 #include "sort_container.hpp"
 
 
-/*
-SortContainer::Swap(&NumberType l, &NumberType r){
-    l ^= r;
-    r ^= l;
-    l ^= r;
-}
-*/
-
 SortContainer::SortContainer(std::string filename, size_t size_to_map, off_t offset){
+    
+    // Проверка на корректность размера всех чисел в файле
     if (size_to_map % sizeof(NumberType) != 0){
         throw std::length_error("Bad size_to_map: contains malformed NumberType");
     }
@@ -32,6 +24,7 @@ SortContainer::SortContainer(std::string filename, size_t size_to_map, off_t off
         throw std::ios_base::failure("Error while opening " + filename);
     }
 
+    // Маппинг части файла в память 
     this->file_contents = static_cast<NumberType*>(
                           mmap(nullptr,
                                size_to_map,
@@ -46,6 +39,9 @@ SortContainer::SortContainer(std::string filename, size_t size_to_map, off_t off
     }
     
     this->count = size_to_map/sizeof(NumberType);
+
+    // mmap после инициализации не зависит от дескриптора.
+    // Дескриптор можно закрыть
     close(fd);
 }
 
@@ -86,22 +82,6 @@ void SortContainer::Sort(OrderBy order){
             }
         }
     };
-    /*
-    auto AscFunc = [](const NumberType* l, const NumberType* r){
-                            return (*l - *r);
-                       };
-    auto DescFunc = [](const NumberType* l, const NumberType* r){
-                            return (*r - *l);
-                       };
-    */
-    
-    /*
-    std::cout << "vvvvvvvvv" << std::endl;
-    for(int i = 0; i < this->count; i++){
-        std::cout << this->file_contents[i] << std::endl;
-    }
-    */
-
     switch(order){
         case OrderBy::Asc:
             std::qsort(this->file_contents, 
@@ -117,8 +97,6 @@ void SortContainer::Sort(OrderBy order){
             break;
     }
     
-    //this->Debug();    
-
 }
 
 
