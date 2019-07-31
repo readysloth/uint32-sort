@@ -2,16 +2,26 @@
 #include <ios>
 #include <cstdlib>
 
+#ifdef unix
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <unistd.h>
 
+#endif
+
+#ifdef _WIN32
+
+#error Native windows compiltion is currently unsupported. Wait or try compile with Cygwin
+
+#endif
+
 #include "sort_container.hpp"
 
 
-SortContainer::SortContainer(std::string filename, size_t size_to_map, off_t offset){
+SortContainer::SortContainer(std::string filename, size_t size_to_map, size_t offset){
     
     // Проверка на корректность размера всех чисел в файле
     if (size_to_map % sizeof(NumberType) != 0){

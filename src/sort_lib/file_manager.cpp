@@ -7,7 +7,7 @@ void FileManager::CopyFile(std::string from_name, std::string to_name){
 
     dst << src.rdbuf();
     
-    if (if.bad()){
+    if (src.bad()){
         throw std::ios_base::failure("Error while reading " + from_name);
     }
 
