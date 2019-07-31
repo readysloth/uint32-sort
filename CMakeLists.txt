@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.13..3.15)
 
 SET(PROJECT_NAME "uint32sort")
 project(${PROJECT_NAME} VERSION 0.01 
