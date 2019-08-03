@@ -1,6 +1,9 @@
 #include "lib_controller.hpp"
 #include "sort_container.hpp"
 
+LibController::LibController(QObject *parent) : QObject(parent) {
+}
+
 LibController::~LibController(){
     delete file_manager;
 }

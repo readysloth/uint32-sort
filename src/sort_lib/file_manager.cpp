@@ -94,3 +94,11 @@ void FileManager::SortFile(OrderBy order){
     
 
 }
+
+decltype(FileManager::remaining_chunks) FileManager::getRemainingChunks(){
+    return this->remaining_chunks;
+}
+
+decltype(FileManager::remaining_chunks) FileManager::getAllChunks(){
+    return this->remaining_chunks;
+}

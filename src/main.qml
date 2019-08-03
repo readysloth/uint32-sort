@@ -4,18 +4,27 @@ import QtQuick.Controls 2.12
 import QtQuick.Controls 1.4 as OldCtrl
 import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.12
-import com.sort.controller 0.1
+import sorting 1.0
 
 Window{
     height: 340
+
+    Text {
+        id: title
+        x: 119
+        y: 16
+        text: qsTr("Сортировка uint32_t чисел")
+        font.pixelSize: 30
+    }
+
     FileDialog {
-        id: fileDialog_for_sort
+        id: fileDialog_for_load
         title: "Выберите файл для сортировки"
         selectedNameFilter: "All files (*)"
         Component.onCompleted: visible = true
         onAccepted: {
             fileDialog_for_save.open()
-            libController.addFile(fileDialog_for_sort.fileUrl, fileDialog_for_save.fileUrl)
+            libController.addFile(fileDialog_for_load.fileUrl, fileDialog_for_save.fileUrl)
         }
     }
     FileDialog {
@@ -43,7 +52,7 @@ Window{
         x: 29
         y: 244
         text: qsTr("Выберите файл")
-        onClicked: fileDialog_for_sort.open()
+        onClicked: fileDialog_for_load.open()
     }
 
     Button {
@@ -62,46 +71,39 @@ Window{
         height: 100
         OldCtrl.ExclusiveGroup{ id: exOrder }
 
-        RadioButton {
+        OldCtrl.RadioButton {
             id: ascOrder
             text: qsTr("По убыванию")
-            OldCtrl.exclusiveGroup: exOrder
+            exclusiveGroup: exOrder
         }
 
-        RadioButton {
+        OldCtrl.RadioButton {
             id: descOrder
             text: qsTr("По возрастанию")
-            OldCtrl.exclusiveGroup: exOrder
+            exclusiveGroup: exOrder
         }
     }
 
     Text {
-        id: element
+        id: chosen_file_txt
         x: 29
         y: 66
         width: 582
         height: 25
-        text: qsTr("Выбран файл ")
+        text: qsTr("Выбран файл ") + fileDialog_for_load.fileUrl
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft
         font.pixelSize: 14
     }
 
-    Text {
-        id: element1
-        x: 119
-        y: 16
-        text: qsTr("Сортировка uint32_t чисел")
-        font.pixelSize: 30
-    }
 
     Text {
-        id: element2
+        id: file_save_txt
         x: 29
         y: 97
         width: 582
         height: 25
-        text: qsTr("Результат будет сохранен в ")
+        text: qsTr("Результат будет сохранен в ") + fileDialog_for_save.fileUrl
         font.pixelSize: 14
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft
@@ -113,7 +115,8 @@ Window{
         y: 157
         width: 582
         height: 27
-        value: 0.5
+        value: 0
     }
+
 
 }

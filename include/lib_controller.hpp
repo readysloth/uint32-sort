@@ -5,9 +5,11 @@
 #include "file_manager.hpp"
 #include "sort_container.hpp"
 
-class LibController : public QObject{
+class LibController: public QObject {
     Q_OBJECT
-    Q_PROPERTY(decltype(getProgress) progress READ getProgress NOTIFY ProgressChanged)
+
+    Q_PROPERTY(double progress READ getProgress NOTIFY ProgressChanged)
+
     public:
         explicit LibController(QObject *parent = 0);
         ~LibController(); 

@@ -12,23 +12,27 @@ project("${PROJECT_NAME}" VERSION 0.01
 
 file(GLOB SRC_FILES *.cpp)
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(INCLUDE_DIR "${PROJECT_SOURCE_DIR}/../include")
 find_package(Qt5 COMPONENTS 
              Core 
              Gui
              Qml
              Quick
              QuickControls2
-            
+             Widgets
+
              REQUIRED)
 
-include_directories("${PROJECT_SOURCE_DIR}/../include" "${PROJECT_SOURCE_DIR}")
+include_directories("${INCLUDE_DIR}" "${PROJECT_SOURCE_DIR}")
 add_subdirectory("${PROJECT_SOURCE_DIR}/sort_lib/")
 
-add_executable("${PROJECT_NAME}" "${SRC_FILES}" "qml.qrc")
+add_executable("${PROJECT_NAME}" "${INCLUDE_DIR}/moc_lib_controller.hpp" "${SRC_FILES}" "qml.qrc")
 
 
 target_link_libraries("${PROJECT_NAME}"
@@ -37,9 +41,8 @@ target_link_libraries("${PROJECT_NAME}"
                       Qt5::Gui
                       Qt5::Qml
                       Qt5::Quick
+                      Qt5::QuickControls2
+                      Qt5::Widgets
                       SortCore
                       )
 
-set_target_properties("${PROJECT_NAME}" PROPERTIES
-                      CXX_STANDARD 11
-                      CXX_STANDARD_REQUIRED ON)
