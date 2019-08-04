@@ -2,11 +2,13 @@
 #include "sort_container.hpp"
 #include <iostream>
 
-LibController::LibController(QObject *parent) : QObject(parent) {
-}
+LibController::LibController(QObject *parent) : QObject(parent) { }
 
 LibController::~LibController(){
-    delete file_manager;
+    if(file_manager != nullptr){
+        delete file_manager;
+        file_manager = nullptr;
+    }
 }
 
 double LibController::getProgress(){
@@ -34,6 +36,10 @@ void LibController::toFile(QString to_name){
 
 void LibController::passToFileManager(){
     if(this->fname_present && this->tname_present){
+        if(file_manager != nullptr){
+            delete file_manager;
+            file_manager = nullptr;
+        }
         file_manager = new FileManager(this->from_name, this->to_name);
     }
     else{
@@ -44,12 +50,15 @@ void LibController::passToFileManager(){
 void LibController::sortFile(LibController::Order order){
     if(this->fname_present && this->tname_present){
         switch(order){
-            case LibController::Order::Asc:
+            case LibController::Order::ASC:
                 this->file_manager->SortFile(OrderBy::Asc);
                 break;
-            case LibController::Order::Desc:
+            case LibController::Order::DESC:
                 this->file_manager->SortFile(OrderBy::Desc);
                 break;
         }
+    }
+    else{
+        std::cout << "sorting was not started, because user did not supply all filenames" << std::endl;
     }
 }

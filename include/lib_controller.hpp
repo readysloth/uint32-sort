@@ -2,6 +2,7 @@
 #define LIB_CONTROLLER_HPP
 #include <QObject>
 #include <QString>
+#include <QThread>
 #include "file_manager.hpp"
 #include "sort_container.hpp"
 
@@ -14,9 +15,9 @@ class LibController: public QObject {
     Q_ENUMS(Order)
 
     public:
-        enum class Order{
-            Asc,
-            Desc
+        enum Order{
+            ASC,
+            DESC
         };
 
         explicit LibController(QObject *parent = 0);
@@ -38,6 +39,7 @@ class LibController: public QObject {
         void ProgressChanged();
 
     private:
+        QThread thread;
         double current_progress;
         bool ready = false;
         
@@ -47,6 +49,6 @@ class LibController: public QObject {
         std::string from_name;
         std::string to_name;
 
-        FileManager* file_manager;
+        FileManager* file_manager = nullptr;
 };
 #endif

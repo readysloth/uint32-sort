@@ -81,11 +81,11 @@ void SortContainer::Sort(OrderBy order){
             const NumberType l = *(static_cast<const NumberType*>(left));
             const NumberType r = *(static_cast<const NumberType*>(right));
             
-            if( r < l ){
-                return -1;
-            }
-            else if( r > l ){
+            if( l < r ){
                 return 1;
+            }
+            else if( l > r ){
+                return -1;
             }
             else{
                 return 0;

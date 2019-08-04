@@ -67,12 +67,16 @@ Window{
         y: 244
         text: qsTr("Сотировать")
         onClicked: {
+            progressBar.value = 0
             updateProgress.start()
-            if(descOrder.checked){
-                libController.sortFile(libController.Desc)
+            console.log("descOrder " + descOrder.checked)
+            console.log("ascOrder " + ascOrder.checked)
+
+            if(descOrder.checked === true){
+                libController.sortFile(libController.DESC, 1)
             }
             else{
-                libController.sortFile(libController.Asc)
+                libController.sortFile(libController.ASC, 0)
             }
         }
     }
@@ -102,13 +106,14 @@ Window{
         OldCtrl.ExclusiveGroup{ id: exOrder }
 
         OldCtrl.RadioButton {
-            id: ascOrder
+            id: descOrder
             text: qsTr("По убыванию")
             exclusiveGroup: exOrder
         }
 
         OldCtrl.RadioButton {
-            id: descOrder
+            id: ascOrder
+            checked: true
             text: qsTr("По возрастанию")
             exclusiveGroup: exOrder
         }
