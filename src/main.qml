@@ -7,6 +7,8 @@ import QtQuick.Layouts 1.12
 import sorting 1.0
 
 Window{
+    visible: true
+    width: 640
     height: 340
 
     Text {
@@ -21,10 +23,16 @@ Window{
         id: fileDialog_for_load
         title: "Выберите файл для сортировки"
         selectedNameFilter: "All files (*)"
+        selectExisting: true
         Component.onCompleted: visible = true
         onAccepted: {
+            var loadPath = fileDialog_for_load.fileUrl.toString();
+            loadPath = loadPath.replace(/^(file:\/{2})/,"");
+
+            libController.fromFile(loadPath)
+
             fileDialog_for_save.open()
-            libController.addFile(fileDialog_for_load.fileUrl, fileDialog_for_save.fileUrl)
+
         }
     }
     FileDialog {
@@ -34,14 +42,12 @@ Window{
         selectedNameFilter: "All files (*)"
         Component.onCompleted: visible = true
         onAccepted: {
-            var loadPath = fileDialog_for_load.fileUrl.toString();
-            loadPath = loadPath.replace(/^(file:\/{2})/,"");
-
             var savePath = fileDialog_for_save.fileUrl.toString();
             savePath = savePath.replace(/^(file:\/{2})/,"");
 
-            console.log("Save Path:" + savePath)
-            libController.addFile()(loadPath, savePath)
+            libController.toFile(savePath)
+
+            libController.passToFileManager()
         }
     }
 
@@ -60,7 +66,31 @@ Window{
         x: 511
         y: 244
         text: qsTr("Сотировать")
-        onClicked: libController.sortFile()
+        onClicked: {
+            updateProgress.start()
+            if(descOrder.checked){
+                libController.sortFile(libController.Desc)
+            }
+            else{
+                libController.sortFile(libController.Asc)
+            }
+        }
+    }
+
+    Timer {
+        id: updateProgress
+        interval: 20;
+        repeat: true
+        onTriggered: {
+            progressBar.value = libController.progress
+        }
+    }
+
+    WorkerScript{
+        id: backgroundSort
+        onMessage: {
+        }
+
     }
 
     ColumnLayout {

@@ -26,13 +26,13 @@ find_package(Qt5 COMPONENTS
              Quick
              QuickControls2
              Widgets
-
-             REQUIRED)
+             REQUIRED
+             )
 
 include_directories("${INCLUDE_DIR}" "${PROJECT_SOURCE_DIR}")
 add_subdirectory("${PROJECT_SOURCE_DIR}/sort_lib/")
 
-add_executable("${PROJECT_NAME}" "${INCLUDE_DIR}/moc_lib_controller.hpp" "${SRC_FILES}" "qml.qrc")
+add_executable("${PROJECT_NAME}" "${INCLUDE_DIR}/lib_controller.hpp" "${SRC_FILES}" "qml.qrc")
 
 
 target_link_libraries("${PROJECT_NAME}"
