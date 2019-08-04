@@ -1,9 +1,17 @@
+#include <QtConcurrent>
+#include <QQmlComponent>
+#include <QMetaObject>
+
+#include <iostream>
+#include <stdexcept>
+#include <ios>
+
 #include "lib_controller.hpp"
 #include "sort_container.hpp"
-#include <QtConcurrent>
-#include <iostream>
 
-void Wrapper4Thread(LibController* cur_lib_ctrl, OrderBy order);
+void Wrapper4Thread(LibController* cur_lib_ctrl);
+
+QObject* LibController::error_reporter;
 
 LibController::LibController(QObject *parent) : QObject(parent) { }
 
@@ -24,18 +32,26 @@ bool LibController::isReady(){
     return this->ready;
 }
 
-void LibController::fromFile(QString from_name){
+void LibController::setFromFile(QString from_name){
     this->from_name = from_name.toUtf8().constData();
     this->fname_present = true;
 
     std::cout << this->from_name << std::endl;
 }
 
-void LibController::toFile(QString to_name){
+void LibController::setToFile(QString to_name){
     this->to_name = to_name.toUtf8().constData();
     this->tname_present = true;
 
     std::cout << this->to_name << std::endl;
+}
+
+void LibController::setOrderAsc(){
+    this->sort_order = OrderBy::Asc;
+}
+
+void LibController::setOrderDesc(){
+    this->sort_order = OrderBy::Desc;
 }
 
 void LibController::passToFileManager(){
@@ -44,31 +60,38 @@ void LibController::passToFileManager(){
             delete file_manager;
             file_manager = nullptr;
         }
-        file_manager = new FileManager(this->from_name, this->to_name);
+
+        try{
+            file_manager = new FileManager(this->from_name, this->to_name);
+        }
+        catch(std::length_error &len_e){
+            QMetaObject::invokeMethod(LibController::error_reporter->findChild<QObject *>("fileLen_fail"),
+                                      "open");
+        }
+        catch(std::ios_base::failure &io_e){
+            QMetaObject::invokeMethod(LibController::error_reporter->findChild<QObject *>("fileOpen_fail"),
+                                      "open");
+        }
+        catch(std::runtime_error &map_e){
+            QMetaObject::invokeMethod(LibController::error_reporter->findChild<QObject *>("fileMap_fail"),
+                                      "open");
+        }
     }
     else{
         std::cout << "waiting for another file" << std::endl;
     }
 }
 
-void LibController::sortFile(LibController::Order order){
+void LibController::sortFile(){
     if(this->fname_present && this->tname_present){
-        switch(order){
-            case LibController::Order::ASC:
-                QtConcurrent::run(Wrapper4Thread, this, OrderBy::Asc);
-                break;
-            case LibController::Order::DESC:
-                QtConcurrent::run(Wrapper4Thread, this, OrderBy::Desc);
-                break;
-        }
+        QtConcurrent::run(Wrapper4Thread, this);
     }
     else{
         std::cout << "sorting was not started, because user did not supply all filenames" << std::endl;
     }
 }
 
-void Wrapper4Thread(LibController* cur_lib_ctrl, OrderBy order){ 
-    //FileManager* working_fm = cur_lib_ctrl->file_manger;
-    cur_lib_ctrl->file_manager->SortFile(order);
+void Wrapper4Thread(LibController* cur_lib_ctrl){ 
+    cur_lib_ctrl->file_manager->SortFile(cur_lib_ctrl->sort_order);
 }
 

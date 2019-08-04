@@ -29,7 +29,7 @@ Window{
             var loadPath = fileDialog_for_load.fileUrl.toString();
             loadPath = loadPath.replace(/^(file:\/{2})/,"");
 
-            libController.fromFile(loadPath)
+            libController.setFromFile(loadPath)
 
             fileDialog_for_save.open()
 
@@ -42,10 +42,13 @@ Window{
         selectedNameFilter: "All files (*)"
         Component.onCompleted: visible = true
         onAccepted: {
+            if(fileDialog_for_load.fileUrl.toString() === fileDialog_for_save.fileUrl.toString())
+                fileOverwrite.open()
+
             var savePath = fileDialog_for_save.fileUrl.toString();
             savePath = savePath.replace(/^(file:\/{2})/,"");
 
-            libController.toFile(savePath)
+            libController.setToFile(savePath)
 
             libController.passToFileManager()
         }
@@ -69,15 +72,7 @@ Window{
         onClicked: {
             progressBar.value = 0
             updateProgress.start()
-            console.log("descOrder " + descOrder.checked)
-            console.log("ascOrder " + ascOrder.checked)
-
-            if(descOrder.checked === true){
-                libController.sortFile(libController.DESC, 1)
-            }
-            else{
-                libController.sortFile(libController.ASC, 0)
-            }
+            libController.sortFile()
         }
     }
 
@@ -86,16 +81,8 @@ Window{
         interval: 20;
         repeat: true
         onTriggered: {
-            console.log(libController.progress)
             progressBar.value = libController.progress
         }
-    }
-
-    WorkerScript{
-        id: backgroundSort
-        onMessage: {
-        }
-
     }
 
     ColumnLayout {
@@ -110,6 +97,9 @@ Window{
             id: descOrder
             text: qsTr("По убыванию")
             exclusiveGroup: exOrder
+            onClicked: {
+                libController.setOrderDesc()
+            }
         }
 
         OldCtrl.RadioButton {
@@ -117,6 +107,9 @@ Window{
             checked: true
             text: qsTr("По возрастанию")
             exclusiveGroup: exOrder
+            onClicked: {
+                libController.setOrderAsc()
+            }
         }
     }
 

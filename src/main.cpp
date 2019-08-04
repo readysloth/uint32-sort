@@ -13,6 +13,11 @@ int main(int argc, char *argv[])
     // Registration of custom type
     qmlRegisterType<LibController>("sorting", 1, 0, "LibController");
 
+    QQmlApplicationEngine error_engine;
+    const QUrl msg_url(QStringLiteral("qrc:/messages.qml"));
+    LibController::error_reporter = QQmlComponent(&error_engine, msg_url).create();
+
+
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));
