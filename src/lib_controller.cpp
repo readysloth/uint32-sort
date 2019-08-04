@@ -1,6 +1,9 @@
 #include "lib_controller.hpp"
 #include "sort_container.hpp"
+#include <QtConcurrent>
 #include <iostream>
+
+void Wrapper4Thread(LibController* cur_lib_ctrl, OrderBy order);
 
 LibController::LibController(QObject *parent) : QObject(parent) { }
 
@@ -12,7 +15,8 @@ LibController::~LibController(){
 }
 
 double LibController::getProgress(){
-    current_progress = this->file_manager->getAllChunks()/this->file_manager->getRemainingChunks();
+    current_progress = static_cast<double>(this->file_manager->getProcessedChunks())/this->file_manager->getAllChunks();
+
     return this->current_progress;
 }
 
@@ -51,10 +55,10 @@ void LibController::sortFile(LibController::Order order){
     if(this->fname_present && this->tname_present){
         switch(order){
             case LibController::Order::ASC:
-                this->file_manager->SortFile(OrderBy::Asc);
+                QtConcurrent::run(Wrapper4Thread, this, OrderBy::Asc);
                 break;
             case LibController::Order::DESC:
-                this->file_manager->SortFile(OrderBy::Desc);
+                QtConcurrent::run(Wrapper4Thread, this, OrderBy::Desc);
                 break;
         }
     }
@@ -62,3 +66,9 @@ void LibController::sortFile(LibController::Order order){
         std::cout << "sorting was not started, because user did not supply all filenames" << std::endl;
     }
 }
+
+void Wrapper4Thread(LibController* cur_lib_ctrl, OrderBy order){ 
+    //FileManager* working_fm = cur_lib_ctrl->file_manger;
+    cur_lib_ctrl->file_manager->SortFile(order);
+}
+

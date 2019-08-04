@@ -86,6 +86,7 @@ Window{
         interval: 20;
         repeat: true
         onTriggered: {
+            console.log(libController.progress)
             progressBar.value = libController.progress
         }
     }

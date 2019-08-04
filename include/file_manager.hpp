@@ -11,8 +11,8 @@ class FileManager{
 
         // Инициализируется единицей так как в SortFile происходит
         // финальное упорядочивание файла
-        size_t remaining_chunks = 1;
-        decltype(remaining_chunks) all_chunks = 1;
+        size_t processed_chunks = 1;
+        decltype(processed_chunks) all_chunks = 1;
 
         bool sort_occured = false;
         
@@ -29,7 +29,7 @@ class FileManager{
         ~FileManager();
         void SortFile(OrderBy order);
 
-        decltype(remaining_chunks) getRemainingChunks();
+        decltype(processed_chunks) getProcessedChunks();
         decltype(all_chunks) getAllChunks();
 
 };

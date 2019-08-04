@@ -45,10 +45,10 @@ void FileManager::DivideFile(size_t parts_cnt, size_t remainder_size){
         file_parts.push_back(new SortContainer(this->filename,
                                                remainder_size,
                                                current_offset));
-        this->remaining_chunks++;
+        this->all_chunks++;
     }
 
-    this->remaining_chunks += parts_cnt;
+    this->all_chunks += parts_cnt;
 
 }
 
@@ -80,7 +80,7 @@ void FileManager::SortFile(OrderBy order){
         this->file_parts[i]->Sort(order);
         
         #pragma omp atomic
-        this->remaining_chunks--;
+        this->processed_chunks++;
     }
 
     // Вызовет деструктор у каждого объекта, удаляя мапинг чанков файла на память
@@ -95,10 +95,10 @@ void FileManager::SortFile(OrderBy order){
 
 }
 
-decltype(FileManager::remaining_chunks) FileManager::getRemainingChunks(){
-    return this->remaining_chunks;
+decltype(FileManager::processed_chunks) FileManager::getProcessedChunks(){
+    return this->processed_chunks;
 }
 
-decltype(FileManager::remaining_chunks) FileManager::getAllChunks(){
-    return this->remaining_chunks;
+decltype(FileManager::processed_chunks) FileManager::getAllChunks(){
+    return this->all_chunks;
 }

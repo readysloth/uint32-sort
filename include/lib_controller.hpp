@@ -23,6 +23,7 @@ class LibController: public QObject {
         explicit LibController(QObject *parent = 0);
         ~LibController(); 
 
+        friend void Wrapper4Thread(LibController* cur_lib_ctrl, OrderBy order); 
         double getProgress();
         bool isReady();
 
@@ -39,7 +40,6 @@ class LibController: public QObject {
         void ProgressChanged();
 
     private:
-        QThread thread;
         double current_progress;
         bool ready = false;
         
@@ -52,3 +52,4 @@ class LibController: public QObject {
         FileManager* file_manager = nullptr;
 };
 #endif
+
