@@ -9,15 +9,12 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);
+    app.setOrganizationName("Я все сам");
+    app.setOrganizationDomain("example.org");
+    app.setApplicationName("uint32_t sort");
 
     // Registration of custom type
     qmlRegisterType<LibController>("sorting", 1, 0, "LibController");
-
-    QQmlApplicationEngine error_engine;
-    const QUrl msg_url(QStringLiteral("qrc:/messages.qml"));
-    LibController::error_reporter = QQmlComponent(&error_engine, msg_url).create();
-
-
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));
@@ -26,6 +23,7 @@ int main(int argc, char *argv[])
         if (!obj && url == objUrl)
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
+
     engine.load(url);
 
 

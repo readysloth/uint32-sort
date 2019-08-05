@@ -11,8 +11,7 @@
 class LibController: public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(double progress READ getProgress NOTIFY ProgressChanged)
-    Q_PROPERTY(bool ready READ isReady)
+    Q_PROPERTY(double progress READ getProgress)
 
     public:
         static QObject *error_reporter;
@@ -39,7 +38,10 @@ class LibController: public QObject {
         void setOrderDesc();
 
     signals:
-        void ProgressChanged();
+        void handleGenFail();
+        void handleMapFail();
+        void handleLenFail();
+        void handleOpenFail();
 
     private:
         double current_progress;
