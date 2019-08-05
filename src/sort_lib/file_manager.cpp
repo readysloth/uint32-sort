@@ -22,7 +22,7 @@ void FileManager::DivideFile(size_t parts_cnt, size_t remainder_size){
     off_t current_offset = 0;
 
     // В случае, если размер одного чанка больше, чем размер файла
-    if (parts_cnt == 0){
+    if (parts_cnt == 0 && remainder_size > 0){
         parts_cnt = 1;
         this->file_parts.push_back(new SortContainer(this->filename,
                                                      remainder_size,

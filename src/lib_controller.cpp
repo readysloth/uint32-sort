@@ -16,14 +16,23 @@ QObject* LibController::error_reporter;
 LibController::LibController(QObject *parent) : QObject(parent) { }
 
 LibController::~LibController(){
-    if(file_manager != nullptr){
+    /*if(file_manager != nullptr){
         delete file_manager;
         file_manager = nullptr;
-    }
+    }*/
 }
 
 double LibController::getProgress(){
-    current_progress = static_cast<double>(this->file_manager->getProcessedChunks())/this->file_manager->getAllChunks();
+
+    double processed_chunks = this->file_manager->getProcessedChunks();
+    double all_chunks = this->file_manager->getAllChunks();
+
+    if(all_chunks != 0){
+        this->current_progress = 1;
+    }
+    else{
+        this->current_progress = processed_chunks/all_chunks;
+    }
 
     return this->current_progress;
 }
@@ -56,25 +65,25 @@ void LibController::setOrderDesc(){
 
 void LibController::passToFileManager(){
     if(this->fname_present && this->tname_present){
-        if(file_manager != nullptr){
+        /*if(file_manager != nullptr){
             delete file_manager;
             file_manager = nullptr;
-        }
+        }*/
 
         try{
             file_manager = new FileManager(this->from_name, this->to_name);
         }
         catch(std::length_error &len_e){
-            QMetaObject::invokeMethod(LibController::error_reporter->findChild<QObject *>("fileLen_fail"),
-                                      "open");
+            emit handleLenFail(); //"fileLen_fail"
         }
         catch(std::ios_base::failure &io_e){
-            QMetaObject::invokeMethod(LibController::error_reporter->findChild<QObject *>("fileOpen_fail"),
-                                      "open");
+            emit handleOpenFail(); //"fileOpen_fail"
         }
         catch(std::runtime_error &map_e){
-            QMetaObject::invokeMethod(LibController::error_reporter->findChild<QObject *>("fileMap_fail"),
-                                      "open");
+            emit handleMapFail(); //"fileMap_fail"
+        }
+        catch(...){
+            emit handleGenFail(); //"generic_fail"
         }
     }
     else{
@@ -92,6 +101,20 @@ void LibController::sortFile(){
 }
 
 void Wrapper4Thread(LibController* cur_lib_ctrl){ 
-    cur_lib_ctrl->file_manager->SortFile(cur_lib_ctrl->sort_order);
+    try{
+        cur_lib_ctrl->file_manager->SortFile(cur_lib_ctrl->sort_order);
+    }
+    catch(std::length_error &len_e){
+        emit cur_lib_ctrl->handleLenFail(); //"fileLen_fail"
+    }
+    catch(std::ios_base::failure &io_e){
+        emit cur_lib_ctrl->handleOpenFail(); //"fileOpen_fail"
+    }
+    catch(std::runtime_error &map_e){
+        emit cur_lib_ctrl->handleMapFail(); //"fileMap_fail"
+    }
+    catch(...){
+        emit cur_lib_ctrl->handleGenFail(); //"generic_fail"
+    }
 }
 
