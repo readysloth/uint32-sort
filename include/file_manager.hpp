@@ -21,12 +21,17 @@ class FileManager{
         size_t                       filesize;
         std::string                  filename;
          
+        // Функция, копирующая файл
         void CopyFile(std::string from_name, std::string to_name);
+
+        // Функция, делящая файл на чанки и инициализирующая контейнеры сортировки
         void DivideFile(size_t parts_cnt, size_t remainder_size);
     public:
         
         FileManager(std::string from_name, std::string to_name);
         ~FileManager();
+
+        // Функция, начинающая сортировку файла
         void SortFile(OrderBy order);
 
         decltype(processed_chunks) getProcessedChunks();

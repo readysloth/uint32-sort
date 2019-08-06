@@ -35,7 +35,7 @@ Window{
                 var loadPath = fileDialog_for_load.fileUrl.toString();
                 loadPath = loadPath.replace(/^(file:\/{2})/,"");
 
-                libController.setFromFile(loadPath)
+                libController.fileToSort = loadPath
 
                 fileDialog_for_save.open()
             }
@@ -45,7 +45,7 @@ Window{
     FileDialog {
         id: fileDialog_for_save
         title: "Сохранить отсортированный файл"
-        selectExisting: false
+        selectFolder: true
         selectedNameFilter: "All files (*)"
         Component.onCompleted: visible = true
         onAccepted: {
@@ -57,11 +57,11 @@ Window{
             }
             else{
                 var savePath = fileDialog_for_save.fileUrl.toString();
-                savePath = savePath.replace(/^(file:\/{2})/,"");
+                savePath = savePath.replace(/^(file:\/{2})/,"") + "/";
+                var filename = libController.fileToSort.match(/([^/]+?)$/)[1]
+                libController.setSaveFile(savePath, filename)
 
-                libController.setToFile(savePath)
-
-                libController.passToFileManager()
+                libController.createFileManager()
             }
         }
     }
@@ -80,6 +80,12 @@ Window{
         }
         onHandleOpenFail: {
             fileOpen_fail.open()
+        }
+        onHandleNotReady: {
+            fileNotReady.open()
+        }
+        onHandleReady: {
+            fileReady.open()
         }
     }
 
@@ -182,6 +188,22 @@ Window{
         visible: false
 
         //------------Сообщения для пользователя------------\\
+        MessageDialog {
+            id: fileNotReady
+            visible: false
+            icon: StandardIcon.Warning
+            title: qsTr("Уведомление")
+            text: qsTr("Пожалуйста, дождитесь окончания процесса сортировки.")
+        }
+
+        MessageDialog {
+            id: fileReady
+            visible: false
+            icon: StandardIcon.Information
+            title: qsTr("Ура!")
+            text: qsTr("Сортировка закончена.")
+        }
+
         MessageDialog {
             id: fileOverwrite
             visible: false
