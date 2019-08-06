@@ -50,7 +50,7 @@ uint32-sort/
 ├── resources
 │   ├── main.qml
 │   └── qml.qrc
-├── src
+└── src
     ├── CMakeLists.txt
     ├── lib_controller.cpp
     ├── main.cpp
