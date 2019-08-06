@@ -16,12 +16,24 @@ QObject* LibController::error_reporter;
 LibController::LibController(QObject *parent) : QObject(parent) { }
 
 LibController::~LibController(){
-    /*if(file_manager != nullptr){
+    if(file_manager != nullptr){
         delete file_manager;
         file_manager = nullptr;
-    }*/
+    }
 }
 
+/**************** Get/Set функции ***************/
+
+/**** Возвращает значение, говорящее о том, готов ли контроллер принять новый файл ****/
+bool LibController::isReady(){
+    return this->ready;
+}
+
+/**** Возвращает прогресс сортировки ****/
+/* 
+ * Это количество обработанных чанков, деленое на общее количество чанков
+ *
+ */
 double LibController::getProgress(){
 
     double processed_chunks = this->file_manager->getProcessedChunks();
@@ -37,23 +49,34 @@ double LibController::getProgress(){
     return this->current_progress;
 }
 
-bool LibController::isReady(){
-    return this->ready;
-}
+/**** Сеттеры имен файлов ****/
 
-void LibController::setFromFile(QString from_name){
+void LibController::setSortFile(QString from_name){
     this->from_name = from_name.toUtf8().constData();
     this->fname_present = true;
 
     std::cout << this->from_name << std::endl;
 }
 
-void LibController::setToFile(QString to_name){
-    this->to_name = to_name.toUtf8().constData();
+void LibController::setSaveFile(QString folder, QString filename){
+    this->to_name = (folder.toUtf8() +
+                    filename.toUtf8().constData() + ".sorted").constData();
     this->tname_present = true;
 
     std::cout << this->to_name << std::endl;
 }
+
+/**** Геттеры имен файлов ****/
+
+QString LibController::getSortFile(){
+   return QString::fromUtf8(this->from_name.c_str());
+}
+
+QString LibController::getSaveFile(){
+   return QString::fromUtf8(this->to_name.c_str());
+}
+
+/**** Сеттеры порядка сортировки ****/
 
 void LibController::setOrderAsc(){
     this->sort_order = OrderBy::Asc;
@@ -63,27 +86,32 @@ void LibController::setOrderDesc(){
     this->sort_order = OrderBy::Desc;
 }
 
-void LibController::passToFileManager(){
+/*************** Функции-обертки над библиотекой ***************/
+
+void LibController::createFileManager(){
+    if(!this->ready){
+        emit handleNotReady();
+    }
     if(this->fname_present && this->tname_present){
-        /*if(file_manager != nullptr){
-            delete file_manager;
-            file_manager = nullptr;
-        }*/
+        if(this->file_manager != nullptr){
+            delete this->file_manager;
+            this->file_manager = nullptr;
+        }
 
         try{
             file_manager = new FileManager(this->from_name, this->to_name);
         }
         catch(std::length_error &len_e){
-            emit handleLenFail(); //"fileLen_fail"
+            emit handleLenFail();
         }
         catch(std::ios_base::failure &io_e){
-            emit handleOpenFail(); //"fileOpen_fail"
+            emit handleOpenFail();
         }
         catch(std::runtime_error &map_e){
-            emit handleMapFail(); //"fileMap_fail"
+            emit handleMapFail();
         }
         catch(...){
-            emit handleGenFail(); //"generic_fail"
+            emit handleGenFail();
         }
     }
     else{
@@ -93,6 +121,10 @@ void LibController::passToFileManager(){
 
 void LibController::sortFile(){
     if(this->fname_present && this->tname_present){
+
+        // Запрещаем любые действия c котроллером
+        this->ready = false;
+        // Запускаем сортировку в отдельном потоке
         QtConcurrent::run(Wrapper4Thread, this);
     }
     else{
@@ -105,16 +137,20 @@ void Wrapper4Thread(LibController* cur_lib_ctrl){
         cur_lib_ctrl->file_manager->SortFile(cur_lib_ctrl->sort_order);
     }
     catch(std::length_error &len_e){
-        emit cur_lib_ctrl->handleLenFail(); //"fileLen_fail"
+        emit cur_lib_ctrl->handleLenFail();
     }
     catch(std::ios_base::failure &io_e){
-        emit cur_lib_ctrl->handleOpenFail(); //"fileOpen_fail"
+        emit cur_lib_ctrl->handleOpenFail();
     }
     catch(std::runtime_error &map_e){
-        emit cur_lib_ctrl->handleMapFail(); //"fileMap_fail"
+        emit cur_lib_ctrl->handleMapFail();
     }
     catch(...){
-        emit cur_lib_ctrl->handleGenFail(); //"generic_fail"
+        emit cur_lib_ctrl->handleGenFail();
     }
+
+    cur_lib_ctrl->ready = true;
+
+    emit cur_lib_ctrl->handleReady();
 }
 
