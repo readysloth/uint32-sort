@@ -24,20 +24,7 @@
 |    master     | Титульная страница                                                                 |
 
 
-Текущее содержание `dev_base`
-
-```
-uint32-sort/
-├── include
-│   ├── file_manager.hpp
-│   └── sort_container.hpp
-└── src
-    ├── CMakeLists.txt
-    ├── file_manager.cpp
-    └── sort_container.cpp
-```
-
-Текущее содержание `dev_qt` и `release`
+Текущее содержание `dev_qt`
 
 ```
 uint32-sort/
