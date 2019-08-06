@@ -8,7 +8,7 @@ using NumberType = uint32_t;
 
 enum OrderBy {Asc, Desc};
 
-class SortContainer final{
+class SortContainer{
     private:
         // Указатель на часть файла, замапленного через mmap
         NumberType* file_contents;
@@ -17,7 +17,8 @@ class SortContainer final{
     public:
        SortContainer(std::string filename, size_t size_to_map, size_t offset);
        ~SortContainer();
-
+        
+       // Функция, начинающая сортировку контейнера
        void Sort(OrderBy order);
 
 };

@@ -22,7 +22,7 @@ void FileManager::DivideFile(size_t parts_cnt, size_t remainder_size){
     off_t current_offset = 0;
 
     // В случае, если размер одного чанка больше, чем размер файла
-    if (parts_cnt == 0){
+    if (parts_cnt == 0 && remainder_size > 0){
         parts_cnt = 1;
         this->file_parts.push_back(new SortContainer(this->filename,
                                                      remainder_size,
@@ -45,10 +45,10 @@ void FileManager::DivideFile(size_t parts_cnt, size_t remainder_size){
         file_parts.push_back(new SortContainer(this->filename,
                                                remainder_size,
                                                current_offset));
-        this->remaining_chunks++;
+        this->all_chunks++;
     }
 
-    this->remaining_chunks += parts_cnt;
+    this->all_chunks += parts_cnt;
 
 }
 
@@ -80,7 +80,7 @@ void FileManager::SortFile(OrderBy order){
         this->file_parts[i]->Sort(order);
         
         #pragma omp atomic
-        this->remaining_chunks--;
+        this->processed_chunks++;
     }
 
     // Вызовет деструктор у каждого объекта, удаляя мапинг чанков файла на память
@@ -93,4 +93,12 @@ void FileManager::SortFile(OrderBy order){
                   0).Sort(order);    
     
 
+}
+
+decltype(FileManager::processed_chunks) FileManager::getProcessedChunks(){
+    return this->processed_chunks;
+}
+
+decltype(FileManager::processed_chunks) FileManager::getAllChunks(){
+    return this->all_chunks;
 }

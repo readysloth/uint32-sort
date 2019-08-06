@@ -62,6 +62,10 @@ SortContainer::~SortContainer(){
 
 void SortContainer::Sort(OrderBy order){
 
+    // qsort из cstdlib не может принять лямбду
+    // а получение функции из лямбды я счел менее информативным, и даже бы сказал
+    // запутывающим.
+    // Поэтому было решено обойтись такой конструкцией
     struct Func{
         static int Asc(const void* left, const void* right){
             const NumberType l = *(static_cast<const NumberType*>(left));
@@ -81,11 +85,11 @@ void SortContainer::Sort(OrderBy order){
             const NumberType l = *(static_cast<const NumberType*>(left));
             const NumberType r = *(static_cast<const NumberType*>(right));
             
-            if( r < l ){
-                return -1;
-            }
-            else if( r > l ){
+            if( l < r ){
                 return 1;
+            }
+            else if( l > r ){
+                return -1;
             }
             else{
                 return 0;

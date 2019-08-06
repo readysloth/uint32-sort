@@ -1,6 +1,7 @@
 #ifndef FILE_MANAGER_HPP
 #define FILE_MANAGER_HPP
 #include <vector>
+#include <fstream>
 #include "sort_container.hpp"
 
 class FileManager{
@@ -10,22 +11,31 @@ class FileManager{
 
         // Инициализируется единицей так как в SortFile происходит
         // финальное упорядочивание файла
-        decltype(std::ifstream.tellg()) remaining_chunks = 1;
+        size_t processed_chunks = 0;
+        decltype(processed_chunks) all_chunks = 0;
 
         bool sort_occured = false;
         
         // Хранилище контейнеров с чанками
-        std::vector<SortContainer*>     file_parts;
-        decltype(std::ifstream.tellg()) filesize;
-        std::string                     filename;
+        std::vector<SortContainer*>  file_parts;
+        size_t                       filesize;
+        std::string                  filename;
          
+        // Функция, копирующая файл
         void CopyFile(std::string from_name, std::string to_name);
+
+        // Функция, делящая файл на чанки и инициализирующая контейнеры сортировки
         void DivideFile(size_t parts_cnt, size_t remainder_size);
     public:
         
         FileManager(std::string from_name, std::string to_name);
         ~FileManager();
+
+        // Функция, начинающая сортировку файла
         void SortFile(OrderBy order);
+
+        decltype(processed_chunks) getProcessedChunks();
+        decltype(all_chunks) getAllChunks();
 
 };
 
