@@ -36,8 +36,13 @@ bool LibController::isReady(){
  */
 double LibController::getProgress(){
 
-    double processed_chunks = this->file_manager->getProcessedChunks();
-    double all_chunks = this->file_manager->getAllChunks();
+    double processed_chunks;
+    double all_chunks;
+
+    if(this->file_manager != nullptr){
+        processed_chunks = this->file_manager->getProcessedChunks();
+        all_chunks = this->file_manager->getAllChunks();
+    }
 
     if(all_chunks != 0){
         this->current_progress = 1;

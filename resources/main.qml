@@ -95,8 +95,13 @@ Window{
         y: 244
         text: qsTr("Выбрать файл")
         onClicked: {
-            progressBar.value = 0
-            fileDialog_for_load.open()
+            if(libController.ready){
+                progressBar.value = 0
+                fileDialog_for_load.open()
+            }
+            else{
+                fileNotReady.open()
+            }
         }
     }
 
@@ -106,9 +111,14 @@ Window{
         y: 244
         text: qsTr("Сортировать")
         onClicked: {
-            progressBar.value = 0
-            updateProgress.start()
-            libController.sortFile()
+            if(libController.ready){
+                progressBar.value = 0
+                updateProgress.start()
+                libController.sortFile()
+            }
+            else{
+                fileNotReady.open()
+            }
         }
     }
 
@@ -194,6 +204,14 @@ Window{
             icon: StandardIcon.Warning
             title: qsTr("Уведомление")
             text: qsTr("Пожалуйста, дождитесь окончания процесса сортировки.")
+        }
+
+        MessageDialog {
+            id: fileInconsistent
+            visible: false
+            icon: StandardIcon.Warning
+            title: qsTr("Уведомление")
+            text: qsTr("Пожалуйста, выберите файл заново")
         }
 
         MessageDialog {
